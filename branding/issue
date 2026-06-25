@@ -1,0 +1,13 @@
+Welcome to NovaOS v1.0 (\s \m \r)
+Kernel \r on an \m (\l)
+
+   _  __               ____  _____ 
+  / |/ /__ _  __ ___ _/ __ \/ ___/ 
+ /    / _ \ |/ // _ `/ /_/ /\__ \  
+/_/|__/\___/___/ \_,_/\____/____/  
+                                   
+NovaOS is a modern, lightweight, developer-friendly distribution.
+To login, use:
+  User: nova (Passwordless automatic login configured)
+  Root: password is "nova"
+

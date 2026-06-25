@@ -1,0 +1,9 @@
+NAME="NovaOS"
+ID=novaos
+ID_LIKE=alpine
+PRETTY_NAME="NovaOS v1.0"
+VERSION_ID=1.0
+VERSION="1.0"
+HOME_URL="https://github.com/adityasharma0903/Nyay-GPT"
+BUG_REPORT_URL="https://github.com/adityasharma0903/Nyay-GPT/issues"
+LOGO="novaos-logo"

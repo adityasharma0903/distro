@@ -1,0 +1,39 @@
+{
+  "policies": {
+    "Homepage": {
+      "URL": "https://github.com/adityasharma0903/Nyay-GPT",
+      "Locked": false,
+      "StartPage": "homepage"
+    },
+    "Bookmarks": [
+      {
+        "Title": "NovaOS Repository",
+        "URL": "https://github.com/adityasharma0903/Nyay-GPT",
+        "Folder": "NovaOS Bookmarks",
+        "Placement": "toolbar"
+      },
+      {
+        "Title": "Alpine Linux Wiki",
+        "URL": "https://wiki.alpinelinux.org/",
+        "Folder": "NovaOS Bookmarks",
+        "Placement": "toolbar"
+      },
+      {
+        "Title": "Alpine Package Database",
+        "URL": "https://pkgs.alpinelinux.org/packages",
+        "Folder": "NovaOS Bookmarks",
+        "Placement": "toolbar"
+      },
+      {
+        "Title": "LXQt Documentation",
+        "URL": "https://lxqt-project.org/",
+        "Folder": "NovaOS Bookmarks",
+        "Placement": "toolbar"
+      }
+    ],
+    "DisableTelemetry": true,
+    "DisableFirefoxStudies": true,
+    "DisablePocket": true,
+    "DisplayBookmarksToolbar": "always"
+  }
+}

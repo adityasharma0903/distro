@@ -1,0 +1,12 @@
+[Configuration]
+ColorBackground=#121820
+ColorForeground=#e2e8f0
+ColorCursor=#00f0ff
+ColorPalette=#121820;#ef4444;#22c55e;#eab308;#3b82f6;#a855f7;#06b6d4;#cbd5e1;#475569;#f87171;#4ade80;#facc15;#60a5fa;#c084fc;#22d3ee;#f1f5f9
+FontName=Monospace 11
+MiscMenuBarState=FALSE
+MiscToolbarsState=FALSE
+MiscScrollbarState=SCROLLBAR_NONE
+MiscShowBorder=TRUE
+MiscInheritGeometry=FALSE
+MiscDefaultGeometry=90x24

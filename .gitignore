@@ -1,0 +1,31 @@
+# NovaOS Build and Temporary Artifacts
+build/*
+!build/.gitkeep
+releases/*
+!releases/.gitkeep
+
+# VMware and Virtualization Files
+*.vmx
+*.vmdk
+*.vmsd
+*.vmxf
+*.nvram
+*.vmem
+*.log
+.vagrant/
+*.ova
+*.ovf
+
+# IDE and Development Settings
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+node_modules/
+
+# Local Environment Variables
+.env
+.env.local
