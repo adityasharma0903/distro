@@ -103,6 +103,10 @@ chmod +x "$APORTS_DIR/scripts/mkimg.novaos.sh"
 cp -f "$PROJECT_ROOT/configs/genapkovl-novaos.sh" "$APORTS_DIR/scripts/genapkovl-novaos.sh"
 chmod +x "$APORTS_DIR/scripts/genapkovl-novaos.sh"
 
+# Patch mkimage.sh to remove --no-chown flag (fixes 'ERROR: --usermode not allowed as root' in newer apk-tools)
+info "Patching mkimage.sh to remove --no-chown..."
+sed -i 's/--no-chown//g' "$APORTS_DIR/scripts/mkimage.sh"
+
 # 8. Clean up old builds in the staging directory
 # Alpine's mkimage caches files under /tmp/mkimage.*. We clean up locally to avoid size mismatches.
 info "Cleaning previous build cache..."
