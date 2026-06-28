@@ -7,3 +7,10 @@ qterminal
 xfce4-terminal
 firefox
 papirus-icon-theme
+
+# Xorg Graphics Server & Input Drivers
+xorg-server
+xf86-video-vesa
+xf86-video-vmware
+xf86-video-modesetting
+xf86-input-libinput

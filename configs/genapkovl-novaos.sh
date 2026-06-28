@@ -102,6 +102,13 @@ usbutils
 util-linux
 iproute2
 acpid
+elogind
+elogind-openrc
+xorg-server
+xf86-video-vesa
+xf86-video-vmware
+xf86-video-modesetting
+xf86-input-libinput
 lxqt-desktop
 lightdm
 lightdm-gtk-greeter
@@ -219,7 +226,6 @@ makefile root:root 0644 "$tmp"/etc/lightdm/lightdm.conf <<EOF
 autologin-user=nova
 autologin-user-timeout=0
 user-session=lxqt
-session-wrapper=/etc/X11/Xsession
 EOF
 
 # xfce4-terminal style configurations
@@ -350,6 +356,7 @@ rc_add udev-trigger sysinit
 
 # Desktop environment, Networking, D-Bus, and Bluetooth
 rc_add dbus default
+rc_add elogind default
 rc_add NetworkManager default
 rc_add lightdm default
 rc_add rfkill default

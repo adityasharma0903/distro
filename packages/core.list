@@ -10,3 +10,5 @@ usbutils
 util-linux
 iproute2
 acpid
+elogind
+elogind-openrc
