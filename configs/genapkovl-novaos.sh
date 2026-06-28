@@ -23,10 +23,6 @@ makefile() {
     PERMS="$2"
     FILENAME="$3"
 
-    echo "OWNER=$OWNER"
-    echo "PERMS=$PERMS"
-    echo "FILE=$FILENAME"
-
     mkdir -p "$(dirname "$FILENAME")"
 
     cat > "$FILENAME"
@@ -316,7 +312,7 @@ if [ -f "$PROJECT_ROOT/installer/install.sh" ]; then
 fi
 
 # Create user desktop shortcut to trigger the installation script
-makefile 1000:1000 "$tmp"/home/nova/Desktop/novaos-install.desktop <<EOF
+makefile 1000:1000 0755 "$tmp"/home/nova/Desktop/novaos-install.desktop <<EOF
 [Desktop Entry]
 Type=Application
 Name=Install NovaOS
