@@ -1,0 +1,7 @@
+# Network Management & Connectivity
+networkmanager
+networkmanager-cli
+networkmanager-wifi
+networkmanager-openrc
+wpa_supplicant
+wireless-tools

@@ -2,8 +2,8 @@
 # This file is loaded by Alpine's mkimage.sh tool during ISO creation.
 
 profile_novaos() {
-    # Inherit from the standard base profile
-    profile_standard
+    # Inherit from the base minimal profile to avoid conflicting legacy packages (like vlan/network-extras)
+    profile_base
     
     # OS Metadata
     profile_abbrev="novaos"
@@ -18,22 +18,16 @@ profile_novaos() {
     apkovl="genapkovl-novaos.sh"
     
     # ------------------ Package Selection ------------------
-    # Dynamically load packages from external list files copied to aports/scripts/
+    # Dynamically load packages from external group list files copied by build_iso.sh
     local script_dir
     script_dir=$(cd "$(dirname "$0")" && pwd)
     
-    local core_list="$script_dir/novaos-packages-core.list"
-    local gui_list="$script_dir/novaos-packages-gui.list"
-    
-    if [ -f "$core_list" ]; then
-        local core_apks
-        core_apks=$(grep -v '^#' "$core_list" | xargs)
-        apks="$apks $core_apks"
-    fi
-    
-    if [ -f "$gui_list" ]; then
-        local gui_apks
-        gui_apks=$(grep -v '^#' "$gui_list" | xargs)
-        apks="$apks $gui_apks"
-    fi
+    for list_name in core desktop network multimedia developer; do
+        local list_file="$script_dir/novaos-packages-${list_name}.list"
+        if [ -f "$list_file" ]; then
+            local file_apks
+            file_apks=$(grep -v '^#' "$list_file" | xargs)
+            apks="$apks $file_apks"
+        fi
+    done
 }

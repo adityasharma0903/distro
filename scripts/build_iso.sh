@@ -125,8 +125,9 @@ cp -f "$PROJECT_ROOT/configs/mkimg.novaos.sh" "$APORTS_DIR/scripts/mkimg.novaos.
 chmod +x "$APORTS_DIR/scripts/mkimg.novaos.sh"
 
 # Copy package lists for the custom profile to read
-cp -f "$PROJECT_ROOT/packages/core.list" "$APORTS_DIR/scripts/novaos-packages-core.list"
-cp -f "$PROJECT_ROOT/packages/gui.list" "$APORTS_DIR/scripts/novaos-packages-gui.list"
+for list_name in core desktop network multimedia developer; do
+    cp -f "$PROJECT_ROOT/packages/${list_name}.list" "$APORTS_DIR/scripts/novaos-packages-${list_name}.list"
+done
 
 # Custom overlay script
 cp -f "$PROJECT_ROOT/configs/genapkovl-novaos.sh" "$APORTS_DIR/scripts/genapkovl-novaos.sh"

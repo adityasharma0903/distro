@@ -1,5 +1,6 @@
-# Core Base Packages
+# Core System Base & Hardware Utilities
 alpine-base
+alpine-conf
 bash
 doas
 eudev
@@ -7,3 +8,5 @@ dbus
 pciutils
 usbutils
 util-linux
+iproute2
+acpid

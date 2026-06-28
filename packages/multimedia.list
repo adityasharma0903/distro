@@ -1,0 +1,9 @@
+# Audio and Sound System
+bluez
+bluez-openrc
+alsa-utils
+pipewire
+pipewire-pulse
+pipewire-alsa
+wireplumber
+blueman
