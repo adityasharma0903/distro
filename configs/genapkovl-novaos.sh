@@ -53,6 +53,7 @@ mkdir -p "$tmp"/etc/xdg/pcmanfm-qt/lxqt
 mkdir -p "$tmp"/home/nova/.config/xfce4/terminal
 mkdir -p "$tmp"/etc/gtk-3.0
 mkdir -p "$tmp"/etc/gtk-2.0
+mkdir -p "$tmp"/etc/polkit-1/rules.d
 
 # 2. Set Hostname (check workspace first)
 if [ -f "$PROJECT_ROOT/branding/hostname" ]; then
@@ -340,4 +341,4 @@ rc_add rfkill default
 rc_add bluez default
 
 # 16. Package the overlay into the final tarball
-tar -cz -C "$tmp" etc home root usr | gzip -9n > "$HOSTNAME".apkovl.tar.gz
+tar -c -C "$tmp" etc home root usr | gzip -9n > "$HOSTNAME".apkovl.tar.gz

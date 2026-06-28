@@ -40,15 +40,21 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 BUILD_DIR="$PROJECT_ROOT/build"
 RELEASES_DIR="$PROJECT_ROOT/releases"
 APORTS_DIR="$BUILD_DIR/aports"
+MKTEMP_DIR="$BUILD_DIR/tmp"
+
+# Configure build staging to use persistent disk instead of RAM-backed /tmp
+export TMPDIR="$MKTEMP_DIR"
 
 info "Initializing NovaOS Live ISO Build..."
 info "Project Root: $PROJECT_ROOT"
 info "Build Directory: $BUILD_DIR"
 info "Releases Directory: $RELEASES_DIR"
+info "Staging Directory: $TMPDIR"
 
 # Ensure outputs directory exists
 mkdir -p "$RELEASES_DIR"
 mkdir -p "$BUILD_DIR"
+mkdir -p "$MKTEMP_DIR"
 
 # Check available space in root partition (15GB minimum)
 # Using BusyBox compatible df columns
@@ -63,7 +69,8 @@ if [ "$FREE_GB" -lt 15 ]; then
     error "At least 15GB free disk space required on root partition. Available: ${FREE_GB}GB."
 fi
 
-info "Cleaning old /tmp/mkimage* directories..."
+info "Cleaning old staging caches..."
+rm -rf "$MKTEMP_DIR"/*
 rm -rf /tmp/mkimage*
 
 
