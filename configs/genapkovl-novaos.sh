@@ -138,70 +138,31 @@ ntfs-3g
 exfat-utils
 EOF
 
-# 6. User accounts, Groups, and Passwords (/etc/passwd, /etc/shadow, /etc/group)
-# Password hash for "nova" is $6$nhx6X8MvKRqddaUM$zkQAruGKUTSXW2TmnYusCCFJ4QnhOHJVFzy36rHORaruM663ML5v/I1QrZoa3022Iyfb7SjkbQMGg89WV5iu5/
-makefile root:root 0644 "$tmp"/etc/passwd <<EOF
-root:x:0:0:root:/root:/bin/bash
-bin:x:1:1:bin:/bin:/sbin/nologin
-daemon:x:2:2:daemon:/sbin:/sbin/nologin
-adm:x:3:4:adm:/var/adm:/sbin/nologin
-lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
-sync:x:5:0:sync:/sbin:/bin/sync
-shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
-halt:x:7:0:halt:/sbin:/sbin/halt
-mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
-news:x:9:13:news:/usr/lib/news:/sbin/nologin
-uucp:x:10:14:uucp:/var/spool/uucppublic:/sbin/nologin
-operator:x:11:0:operator:/root:/sbin/nologin
-postmaster:x:14:12:postmaster:/var/spool/mail:/sbin/nologin
-nobody:x:65534:65534:nobody:/:/sbin/nologin
-nova:x:1000:1000:NovaOS User:/home/nova:/bin/bash
-EOF
+# 6. Dynamic User initialization & elevation setup (runs once on boot)
+makefile root:root 0755 "$tmp"/etc/local.d/novaos-setup.start <<EOF
+#!/bin/sh
 
-makefile root:root 0600 "$tmp"/etc/shadow <<EOF
-root:\$6\$nhx6X8MvKRqddaUM\$zkQAruGKUTSXW2TmnYusCCFJ4QnhOHJVFzy36rHORaruM663ML5v/I1QrZoa3022Iyfb7SjkbQMGg89WV5iu5/:19842:0:99999:7:::
-bin:!::0:99999:7:::
-daemon:!::0:99999:7:::
-adm:!::0:99999:7:::
-lp:!::0:99999:7:::
-sync:!::0:99999:7:::
-shutdown:!::0:99999:7:::
-halt:!::0:99999:7:::
-mail:!::0:99999:7:::
-news:!::0:99999:7:::
-uucp:!::0:99999:7:::
-operator:!::0:99999:7:::
-postmaster:!::0:99999:7:::
-nobody:!::0:99999:7:::
-nova:\$6\$nhx6X8MvKRqddaUM\$zkQAruGKUTSXW2TmnYusCCFJ4QnhOHJVFzy36rHORaruM663ML5v/I1QrZoa3022Iyfb7SjkbQMGg89WV5iu5/:19842:0:99999:7:::
-EOF
+# 1. Create 'nova' group & user dynamically if missing
+if ! id -u nova >/dev/null 2>&1; then
+    addgroup -g 1000 nova 2>/dev/null || addgroup nova
+    adduser -D -u 1000 -g "NovaOS User" -s /bin/bash -G nova nova
+    # Set default passwords (nova / root)
+    echo "nova:nova" | chpasswd
+    echo "root:nova" | chpasswd
+fi
 
-makefile root:root 0644 "$tmp"/etc/group <<EOF
-root:x:0:root
-bin:x:1:root,bin
-daemon:x:2:root,daemon
-sys:x:3:root,bin,adm
-adm:x:4:root,adm
-tty:x:5:
-disk:x:6:root
-lp:x:7:lp
-mem:x:8:
-kmem:x:9:
-wheel:x:10:root,nova
-floppy:x:11:root
-mail:x:12:mail
-news:x:13:news
-uucp:x:14:uucp
-dialout:x:20:root,nova
-audio:x:18:nova
-video:x:27:nova
-netdev:x:28:nova
-input:x:29:nova
-kvm:x:34:nova
-usb:x:85:nova
-abuild:x:300:nova
-nogroup:x:65534:
-nova:x:1000:nova
+# 2. Assign 'nova' user to administrative, media, and input groups
+for g in wheel audio video netdev input kvm usb dialout; do
+    addgroup -S "\$g" 2>/dev/null || true
+    addgroup nova "\$g" 2>/dev/null || true
+done
+
+# 3. Ensure proper permissions and ownership across home directories
+chown -R 1000:1000 /home/nova
+
+# 4. Set doas configuration security policies
+chmod 0640 /etc/doas.d/doas.conf 2>/dev/null || true
+chown root:root /etc/doas.d/doas.conf 2>/dev/null || true
 EOF
 
 # 7. Doas Configuration for passwordless elevation
@@ -226,6 +187,7 @@ makefile root:root 0644 "$tmp"/etc/lightdm/lightdm.conf <<EOF
 autologin-user=nova
 autologin-user-timeout=0
 user-session=lxqt
+greeter-session=lightdm-gtk-greeter
 EOF
 
 # xfce4-terminal style configurations
@@ -361,6 +323,7 @@ rc_add NetworkManager default
 rc_add lightdm default
 rc_add rfkill default
 rc_add bluez default
+rc_add local default
 
 # 16. Package the overlay into the final tarball
 tar -c -C "$tmp" etc home root usr | gzip -9n > "$HOSTNAME".apkovl.tar.gz
