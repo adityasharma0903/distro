@@ -10,6 +10,9 @@ profile_novaos() {
     title="NovaOS"
     desc="NovaOS Live Desktop Edition"
     image_name="novaos"
+    image_ext="iso"
+    output_format="iso"
+    arch="x86_64"
     
     # Boot command line options
     kernel_cmdline="unionfs_size=1024M console=tty0 quiet splash"
