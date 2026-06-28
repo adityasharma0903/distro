@@ -32,7 +32,7 @@ error() {
 
 # 1. Require root execution
 if [ "$EUID" -ne 0 ]; then
-    error "This installer must be run as root. Try: sudo bash $0"
+    error "This installer must be run as root. Try: doas bash $0"
 fi
 
 echo -e "${GREEN}"

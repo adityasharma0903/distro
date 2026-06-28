@@ -40,7 +40,7 @@ trap cleanup EXIT
 mkdir -p "$tmp"/etc
 mkdir -p "$tmp"/etc/apk
 mkdir -p "$tmp"/etc/network
-mkdir -p "$tmp"/etc/sudoers.d
+mkdir -p "$tmp"/etc/doas.d
 mkdir -p "$tmp"/etc/lightdm
 mkdir -p "$tmp"/home/nova/Desktop
 mkdir -p "$tmp"/root
@@ -71,30 +71,48 @@ auto lo
 iface lo inet loopback
 EOF
 
-# 4. APK Repository list to configure during live run (Points to CDN mirror)
+# 4. APK Repository list to configure during live run
+# Dynamically configured based on the running build host's version (retrieved via resolv/alpine-release)
+ALPINE_VER=$(cat /etc/alpine-release | cut -d'.' -f1-2)
+if [[ ! "$ALPINE_VER" =~ ^[0-9]+\.[0-9]+$ ]]; then
+    ALPINE_VER="3.24" # Default fallback
+fi
+
 makefile root:root 0644 "$tmp"/etc/apk/repositories <<EOF
-http://dl-cdn.alpinelinux.org/alpine/v3.20/main
-http://dl-cdn.alpinelinux.org/alpine/v3.20/community
+https://dl-cdn.alpinelinux.org/alpine/v${ALPINE_VER}/main
+https://dl-cdn.alpinelinux.org/alpine/v${ALPINE_VER}/community
 EOF
 
 # 5. APK World file (defines the core pack list we expect to run)
-# These packages will be preinstalled by mkimage, but listing them in world keeps them in the database
+# Registered dependencies mirroring the compose package list system
 makefile root:root 0644 "$tmp"/etc/apk/world <<EOF
 alpine-base
 eudev
 dbus
 networkmanager
+networkmanager-cli
+networkmanager-wifi
+networkmanager-openrc
 lightdm
 lightdm-gtk-greeter
-lxqt-desktop
+lxqt-session
+lxqt-panel
 pcmanfm-qt
+lxqt-runner
+openbox
+lxmenu-data
+lxqt-powermanagement
 xfce4-terminal
 firefox
 bash
-sudo
+doas
 bluez
+bluez-openrc
 arc-theme
 papirus-icon-theme
+dosfstools
+ntfs-3g
+exfat-utils
 EOF
 
 # 6. User accounts, Groups, and Passwords (/etc/passwd, /etc/shadow, /etc/group)
@@ -163,9 +181,11 @@ nogroup:x:65534:
 nova:x:1000:nova
 EOF
 
-# 7. Sudoers Configuration for passwordless elevation
-makefile root:root 0440 "$tmp"/etc/sudoers.d/nova <<EOF
-nova ALL=(ALL) NOPASSWD: ALL
+# 7. Doas Configuration for passwordless elevation
+# This permits user 'nova' and any other member of 'wheel' to run as root without password
+makefile root:root 0640 "$tmp"/etc/doas.d/doas.conf <<EOF
+permit nopass root
+permit nopass :wheel
 EOF
 
 # 8. Copy Custom System & Application Configurations from Workspace
@@ -281,7 +301,7 @@ makefile 1000:1000 "$tmp"/home/nova/Desktop/novaos-install.desktop <<EOF
 Type=Application
 Name=Install NovaOS
 Comment=Install NovaOS persistently to a hard disk
-Exec=xfce4-terminal -e "sudo /usr/sbin/novaos-install"
+Exec=xfce4-terminal -e "doas /usr/sbin/novaos-install"
 Icon=system-software-install
 Terminal=false
 Categories=System;Installer;
@@ -321,4 +341,3 @@ rc_add bluez default
 
 # 16. Package the overlay into the final tarball
 tar -cz -C "$tmp" etc home root usr | gzip -9n > "$HOSTNAME".apkovl.tar.gz
-EOF

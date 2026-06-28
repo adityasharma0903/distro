@@ -1,0 +1,9 @@
+# Core Base Packages
+alpine-base
+bash
+doas
+eudev
+dbus
+pciutils
+usbutils
+util-linux

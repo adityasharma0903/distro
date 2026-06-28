@@ -50,6 +50,17 @@ info "Releases Directory: $RELEASES_DIR"
 mkdir -p "$RELEASES_DIR"
 mkdir -p "$BUILD_DIR"
 
+# Check available space in root partition (15GB minimum)
+info "Verifying disk space..."
+AVAILABLE=$(df --output=avail -BG / | tail -1 | tr -dc '0-9')
+if [ "$AVAILABLE" -lt 15 ]; then
+    error "At least 15GB free disk space required on root partition. Available: ${AVAILABLE}GB."
+fi
+
+info "Cleaning old /tmp/mkimage* directories..."
+rm -rf /tmp/mkimage*
+
+
 # 3. Ensure essential build utilities are present
 info "Verifying dependencies..."
 for dep in git xorriso mksquashfs grub-mkimage abuild; do
@@ -71,13 +82,14 @@ else
 fi
 
 # 5. Determine the Alpine stable release branch
-# We read /etc/alpine-release and match the branch version (e.g., "3.20")
-ALPINE_VERSION=$(cat /etc/alpine-release | cut -d'.' -f1-2)
+# We read /etc/alpine-release and match the branch version (e.g., "3.24")
+ALPINEREL=$(cat /etc/alpine-release 2>/dev/null || echo "3.24")
+ALPINE_VERSION=$(echo "$ALPINEREL" | cut -d'.' -f1-2)
 # Check for edge or customized installs, fallback to master if needed
 if [[ "$ALPINE_VERSION" =~ ^[0-9]+\.[0-9]+$ ]]; then
     APORTS_BRANCH="${ALPINE_VERSION}-stable"
 else
-    APORTS_BRANCH="3.20-stable" # default fallback
+    APORTS_BRANCH="3.24-stable" # default fallback
 fi
 
 # 6. Fetch/Clone aports tree
@@ -98,6 +110,10 @@ info "Registering NovaOS profile and overlay script in build tree..."
 # Custom profile script
 cp -f "$PROJECT_ROOT/configs/mkimg.novaos.sh" "$APORTS_DIR/scripts/mkimg.novaos.sh"
 chmod +x "$APORTS_DIR/scripts/mkimg.novaos.sh"
+
+# Copy package lists for the custom profile to read
+cp -f "$PROJECT_ROOT/packages/core.list" "$APORTS_DIR/scripts/novaos-packages-core.list"
+cp -f "$PROJECT_ROOT/packages/gui.list" "$APORTS_DIR/scripts/novaos-packages-gui.list"
 
 # Custom overlay script
 cp -f "$PROJECT_ROOT/configs/genapkovl-novaos.sh" "$APORTS_DIR/scripts/genapkovl-novaos.sh"

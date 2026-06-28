@@ -12,43 +12,28 @@ profile_novaos() {
     image_name="novaos"
     
     # Boot command line options
-    # - unionfs_size=512M: Sets RAM disk size for changes
-    # - quiet: Mutes standard boot logs for a cleaner look
-    # - splash: Prepares frame buffer graphics splash (future milestone)
     kernel_cmdline="unionfs_size=1024M console=tty0 quiet splash"
     
     # Use our custom apkovl generator instead of the default dhcp one
     apkovl="genapkovl-novaos.sh"
     
     # ------------------ Package Selection ------------------
+    # Dynamically load packages from external list files copied to aports/scripts/
+    local script_dir
+    script_dir=$(cd "$(dirname "$0")" && pwd)
     
-    # 1. Development Tools
-    apks="$apks bash sudo git nano vim"
+    local core_list="$script_dir/novaos-packages-core.list"
+    local gui_list="$script_dir/novaos-packages-gui.list"
     
-    # 2. Xorg & Graphics Drivers (supporting VMware, VirtualBox, and standard hardware)
-    apks="$apks xorg-server xf86-video-vesa xf86-video-vmware xf86-video-modesetting xf86-input-libinput"
+    if [ -f "$core_list" ]; then
+        local core_apks
+        core_apks=$(grep -v '^#' "$core_list" | xargs)
+        apks="$apks $core_apks"
+    fi
     
-    # 3. LightDM Display Manager
-    apks="$apks lightdm lightdm-gtk-greeter"
-    
-    # 4. LXQt Desktop Environment
-    apks="$apks lxqt-desktop pcmanfm-qt lxqt-powermanagement lxmenu-data"
-    
-    # 5. Core GUI Applications & Utilities
-    apks="$apks xfce4-terminal firefox"
-    
-    # 6. Network Management (NetworkManager for friendly GUI/CLI network toggle)
-    apks="$apks networkmanager networkmanager-cli networkmanager-wifi wpa_supplicant wireless-tools"
-    
-    # 7. Hardware & Bluetooth Support
-    apks="$apks eudev bluez bluez-openrc pciutils usbutils"
-    
-    # 8. Audio Subsystem (Pipewire for modern audio routing)
-    apks="$apks alsa-utils pipewire pipewire-pulse pipewire-alsa wireplumber"
-    
-    # 9. Additional Custom Filesystems
-    apks="$apks dosfstools ntfs-3g exfat-utils"
-    
-    # 10. Themes & Icons
-    apks="$apks arc-theme papirus-icon-theme"
+    if [ -f "$gui_list" ]; then
+        local gui_apks
+        gui_apks=$(grep -v '^#' "$gui_list" | xargs)
+        apks="$apks $gui_apks"
+    fi
 }
