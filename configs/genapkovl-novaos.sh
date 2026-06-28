@@ -201,7 +201,7 @@ permit nopass :wheel
 EOF
 
 # 8. Copy Custom System & Application Configurations from Workspace
-info "Injecting workspace configuration files into overlay..."
+echo "[INFO] Injecting workspace configuration files into overlay..."
 
 # LightDM Autologin & Greeter settings
 if [ -f "$PROJECT_ROOT/configs/lightdm-gtk-greeter.conf" ]; then
