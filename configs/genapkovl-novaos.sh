@@ -22,6 +22,13 @@ makefile() {
     OWNER="$1"
     PERMS="$2"
     FILENAME="$3"
+
+    echo "OWNER=$OWNER"
+    echo "PERMS=$PERMS"
+    echo "FILE=$FILENAME"
+
+    mkdir -p "$(dirname "$FILENAME")"
+
     cat > "$FILENAME"
     chown "$OWNER" "$FILENAME"
     chmod "$PERMS" "$FILENAME"
@@ -74,10 +81,11 @@ EOF
 
 # 4. APK Repository list to configure during live run
 # Dynamically configured based on the running build host's version (retrieved via resolv/alpine-release)
-ALPINE_VER=$(cat /etc/alpine-release | cut -d'.' -f1-2)
-if [[ ! "$ALPINE_VER" =~ ^[0-9]+\.[0-9]+$ ]]; then
-    ALPINE_VER="3.24" # Default fallback
-fi
+ALPINE_VER=$(cat /etc/alpine-release 2>/dev/null | cut -d'.' -f1-2 || echo "3.24")
+case "$ALPINE_VER" in
+    [0-9]*.[0-9]*) ;;
+    *) ALPINE_VER="3.24" ;;
+esac
 
 makefile root:root 0644 "$tmp"/etc/apk/repositories <<EOF
 https://dl-cdn.alpinelinux.org/alpine/v${ALPINE_VER}/main
