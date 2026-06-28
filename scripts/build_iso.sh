@@ -51,10 +51,16 @@ mkdir -p "$RELEASES_DIR"
 mkdir -p "$BUILD_DIR"
 
 # Check available space in root partition (15GB minimum)
+# Using BusyBox compatible df columns
 info "Verifying disk space..."
-AVAILABLE=$(df --output=avail -BG / | tail -1 | tr -dc '0-9')
-if [ "$AVAILABLE" -lt 15 ]; then
-    error "At least 15GB free disk space required on root partition. Available: ${AVAILABLE}GB."
+FREE_MB=$(df -m / | awk '$6 == "/" {print $4}')
+if [ -z "$FREE_MB" ] || [[ ! "$FREE_MB" =~ ^[0-9]+$ ]]; then
+    # Fallback to last line fourth field if awk exact match failed
+    FREE_MB=$(df -m / | tail -n 1 | awk '{print $4}')
+fi
+FREE_GB=$(( FREE_MB / 1024 ))
+if [ "$FREE_GB" -lt 15 ]; then
+    error "At least 15GB free disk space required on root partition. Available: ${FREE_GB}GB."
 fi
 
 info "Cleaning old /tmp/mkimage* directories..."
