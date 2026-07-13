@@ -333,10 +333,10 @@ rc_add udev-trigger sysinit
 rc_add dbus default
 rc_add elogind default
 rc_add NetworkManager default
+rc_add local boot
 rc_add lightdm default
 rc_add rfkill default
 rc_add bluez default
-rc_add local default
 
 # 16. Package the overlay into the final tarball
 tar -c -C "$tmp" etc home root usr | gzip -9n > "$HOSTNAME".apkovl.tar.gz
