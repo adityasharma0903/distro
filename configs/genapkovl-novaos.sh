@@ -110,6 +110,7 @@ xf86-video-vmware
 xf86-video-modesetting
 xf86-input-libinput
 lxqt-desktop
+openbox
 lightdm
 lightdm-gtk-greeter
 pcmanfm-qt

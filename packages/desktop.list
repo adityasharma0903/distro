@@ -1,5 +1,6 @@
 # LXQt Desktop Environment & Core Applications
 lxqt-desktop
+openbox
 lightdm
 lightdm-gtk-greeter
 pcmanfm-qt
