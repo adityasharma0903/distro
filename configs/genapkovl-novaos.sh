@@ -110,6 +110,7 @@ xf86-video-vmware
 xf86-video-modesetting
 xf86-input-libinput
 lxqt-desktop
+lxqt-session
 openbox
 lightdm
 lightdm-gtk-greeter
@@ -290,6 +291,17 @@ Exec=xfce4-terminal -e "doas /usr/sbin/novaos-install"
 Icon=system-software-install
 Terminal=false
 Categories=System;Installer;
+EOF
+
+# Ensure LightDM and startx both land in a real LXQt session instead of a blank shell
+makefile 1000:1000 0755 "$tmp"/home/nova/.xsession <<EOF
+#!/bin/sh
+exec startlxqt
+EOF
+
+makefile 1000:1000 0755 "$tmp"/home/nova/.xinitrc <<EOF
+#!/bin/sh
+exec startlxqt
 EOF
 
 # 13. Ensure home folder ownership is correct
