@@ -104,3 +104,7 @@ novaos/
 3. **Performance First**: Idle resource use is our baseline metric. Keep runlevels clean.
 4. **Modern UI Aesthetics**: A lightweight desktop doesn't have to look ancient. We utilize modern fonts, clean widget stylesheets, and coordinated color palettes.
 5. **Open Source by Default**: All scripts, configurations, and documentation must be licensed under open-source licenses.
+
+## 🔁 Development Workflow
+
+For fast iteration, use the development workflow guide in [docs/development_workflow.md](docs/development_workflow.md) and run the quick repository sanity check with [scripts/dev_check.sh](scripts/dev_check.sh) before building the final ISO.
