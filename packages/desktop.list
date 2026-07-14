@@ -1,18 +1,39 @@
-# LXQt Desktop Environment & Core Applications
+# Display Server
+xorg-server
+xinit
+xauth
+xrandr
+mesa-dri-gallium
+mesa-gl
+mesa-egl
+
+# Input
+libinput
+xf86-input-libinput
+xf86-video-vmware
+xf86-video-vesa
+xf86-video-modesetting
+
+# Session
+dbus
+dbus-x11
+elogind
+elogind-openrc
+polkit
+polkit-elogind
+accountsservice
+
+# Desktop
+lightdm
+lightdm-gtk-greeter
 lxqt-desktop
 lxqt-session
 openbox
-lightdm
-lightdm-gtk-greeter
 pcmanfm-qt
 qterminal
-xfce4-terminal
-firefox
+
+# Icons
 papirus-icon-theme
 
-# Xorg Graphics Server & Input Drivers
-xorg-server
-xf86-video-vesa
-xf86-video-vmware
-xf86-video-modesetting
-xf86-input-libinput
+# Browser
+firefox

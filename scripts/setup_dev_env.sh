@@ -61,18 +61,24 @@ apk update
 
 # 4. Install required build dependencies
 # - alpine-sdk: Metapackage for build tools (gcc, make, binutils, git, abuild)
-# - xorriso: Multi-format ISO 9660 filesystem image creator
+# - xorg-server/xinit/lightdm/LXQt stack: lets the dev VM boot into the same desktop path as the ISO
+# - xorriso: Multi-format ISO 9660 filesystem creator
 # - squashfs-tools: Utilities to create compressed read-only filesystems for live systems
 # - syslinux: Bootloader for legacy BIOS boots
 # - grub-efi: Bootloader for UEFI boots
 # - mtools & dosfstools: Utilities to write MS-DOS FAT filesystems (needed for UEFI boot partitions)
 # - bash: Needed for specific upstream mkimage scripts
-BUILD_PACKAGES="alpine-sdk xorriso squashfs-tools syslinux grub-efi mtools dosfstools bash"
+BUILD_PACKAGES="alpine-sdk xorg-server xinit xauth xrandr mesa-dri-gallium mesa-gl mesa-egl libinput xf86-input-libinput xf86-video-vmware xf86-video-vesa xf86-video-modesetting dbus dbus-x11 elogind elogind-openrc polkit polkit-elogind accountsservice lightdm lightdm-gtk-greeter lxqt-desktop lxqt-session openbox pcmanfm-qt qterminal papirus-icon-theme firefox xorriso squashfs-tools syslinux grub-efi mtools dosfstools bash"
 
 info "Installing build packages: $BUILD_PACKAGES..."
 apk add $BUILD_PACKAGES
 
 success "Packages successfully installed."
+
+info "Enabling desktop services in the dev VM..."
+rc-update add dbus default 2>/dev/null || true
+rc-update add elogind default 2>/dev/null || true
+rc-update add lightdm default 2>/dev/null || true
 
 # 5. Configure abuild for the developer user
 if [ -n "$DEV_USER" ] && [ "$DEV_USER" != "root" ]; then

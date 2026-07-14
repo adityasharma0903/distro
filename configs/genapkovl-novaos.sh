@@ -45,6 +45,7 @@ mkdir -p "$tmp"/etc/apk
 mkdir -p "$tmp"/etc/network
 mkdir -p "$tmp"/etc/doas.d
 mkdir -p "$tmp"/etc/lightdm
+mkdir -p "$tmp"/etc/skel
 mkdir -p "$tmp"/home/nova/Desktop
 mkdir -p "$tmp"/root
 mkdir -p "$tmp"/usr/share/backgrounds/novaos
@@ -148,6 +149,8 @@ makefile root:root 0755 "$tmp"/etc/local.d/novaos-setup.start <<EOF
 if ! id -u nova >/dev/null 2>&1; then
     addgroup -g 1000 nova 2>/dev/null || addgroup nova
     adduser -D -u 1000 -g "NovaOS User" -s /bin/bash -G nova nova
+    cp /etc/skel/.xsession /home/nova/.xsession 2>/dev/null || true
+    cp /etc/skel/.xinitrc /home/nova/.xinitrc 2>/dev/null || true
     # Set default passwords (nova / root)
     echo "nova:nova" | chpasswd
     echo "root:nova" | chpasswd
@@ -165,6 +168,11 @@ chown -R 1000:1000 /home/nova
 # 4. Set doas configuration security policies
 chmod 0640 /etc/doas.d/doas.conf 2>/dev/null || true
 chown root:root /etc/doas.d/doas.conf 2>/dev/null || true
+
+# 5. Start desktop prerequisites early so autologin does not race user creation
+rc-service dbus start 2>/dev/null || true
+rc-service elogind start 2>/dev/null || true
+rc-service lightdm start 2>/dev/null || true
 EOF
 
 # 7. Doas Configuration for passwordless elevation
@@ -293,14 +301,12 @@ Terminal=false
 Categories=System;Installer;
 EOF
 
-# Ensure LightDM and startx both land in a real LXQt session instead of a blank shell
-makefile 1000:1000 0755 "$tmp"/home/nova/.xsession <<EOF
-#!/bin/sh
+# Default LXQt session for new users and autologin fallback
+makefile root:root 0644 "$tmp"/etc/skel/.xsession <<EOF
 exec startlxqt
 EOF
 
-makefile 1000:1000 0755 "$tmp"/home/nova/.xinitrc <<EOF
-#!/bin/sh
+makefile root:root 0644 "$tmp"/etc/skel/.xinitrc <<EOF
 exec startlxqt
 EOF
 
